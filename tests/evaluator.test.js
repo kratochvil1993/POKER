@@ -181,6 +181,14 @@
     assert.equal(name('Ah Kd 9c 7s 5h 3d 2c'), 'Vysoká karta – eso');
   });
 
+  test('evaluator: krátké názvy kategorií', () => {
+    const { categoryLabel } = root.Poker.Evaluator;
+    assert.equal(categoryLabel(evaluate(parseCards('As Ks Qs Js Ts 2d 3c'))), 'Královská postupka');
+    assert.equal(categoryLabel(evaluate(parseCards('9h 8h 7h 6h 5h 2d 3c'))), 'Postupka v barvě');
+    assert.equal(categoryLabel(evaluate(parseCards('Ah Ad 9c 7s 5h 3d 2c'))), 'Pár');
+    assert.equal(categoryLabel(evaluate(parseCards('Kh Kd Kc 9s 9h 3d 2c'))), 'Full house');
+  });
+
   test('evaluator: bestFive vrátí pět karet se stejným skóre', () => {
     const cards = parseCards('Ah Ad 9c 9s 5h 3d 2c');
     const best = bestFive(cards);

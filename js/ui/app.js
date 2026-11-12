@@ -21,7 +21,7 @@
   Poker.app = app;
 
   function freshUi() {
-    return { revealIds: new Set(), actionLabels: {}, winnerIds: new Set(), bestKeys: new Set(), dealing: false, runoutAnnounced: false };
+    return { revealIds: new Set(), actionLabels: {}, winnerIds: new Set(), bestKeys: new Set(), handNames: {}, dealing: false, runoutAnnounced: false };
   }
 
   function later(fn, ms) {
@@ -227,8 +227,8 @@
     const game = app.game;
     const lastLevel = game.blindLevel >= game.blindLevels.length - 1;
     const untilRaise = game.handsPerLevel - ((game.handNumber - 1) % game.handsPerLevel);
-    const suffix = lastLevel ? '' : ` • blindy ↑ za ${untilRaise}`;
-    $('blindInfo').textContent = `Ruka č. ${game.handNumber} • blindy ${formatChips(game.smallBlind)}/${formatChips(game.bigBlind)}${suffix}`;
+    const suffix = lastLevel ? '' : ` (↑ za ${untilRaise})`;
+    $('blindInfo').textContent = `Ruka ${game.handNumber} • ${formatChips(game.smallBlind)}/${formatChips(game.bigBlind)}${suffix}`;
   }
 
   function botDelay() {
@@ -301,6 +301,9 @@
 
     if (result.showdown) app.ui.revealIds = new Set(game.contenders().map((p) => p.id));
     app.ui.winnerIds = new Set(result.winnerIds);
+    if (result.showdown) {
+      for (const [id, hand] of Object.entries(result.hands)) app.ui.handNames[id] = Poker.Evaluator.categoryLabel(hand);
+    }
     app.ui.actionLabels = {};
     const spotlightId = payoutToHuman ? HUMAN_ID : result.winnerIds[0];
     if (result.showdown && result.hands[spotlightId]) {
@@ -311,7 +314,11 @@
     const summary = Messages.resultSummary(result, nameOf);
     const outcome = payoutToHuman > 0 ? 'win' : human.folded ? 'fold' : 'lose';
     const humorLine = Messages.humanLine(human.name, outcome);
-    app.table.showBanner([summary.title, summary.detail, humorLine], outcome === 'win' ? 'win' : outcome === 'lose' ? 'lose' : '');
+    const lines = [summary.title, summary.detail];
+    const ownHandLine = describeOwnHand(result, human, payoutToHuman);
+    if (ownHandLine) lines.push(ownHandLine);
+    lines.push(humorLine);
+    app.table.showBanner(lines, outcome === 'win' ? 'win' : outcome === 'lose' ? 'lose' : '');
     addLog(`${summary.title} – ${summary.detail}`, 'result');
     if (result.showdown) {
       for (const player of game.contenders()) {
@@ -325,6 +332,15 @@
     saveSnapshot(game);
     setPanelMode('next');
     if (app.data.settings.autoNext) later(startNextHand, 4200);
+  }
+
+  function describeOwnHand(result, human, payoutToHuman) {
+    const hand = result.hands[HUMAN_ID];
+    if (hand) return payoutToHuman > 0 && result.winnerIds.length === 1 ? '' : `Tvoje ruka: ${hand.name}`;
+    if (human.folded && app.game.board.length >= 3) {
+      return `Složené karty by dávaly: ${evaluateWithName([...human.hole, ...app.game.board]).name}`;
+    }
+    return '';
   }
 
   function updateStats(result, payoutToHuman) {
@@ -500,6 +516,18 @@
     modalApi('menuModal').show();
   }
 
+  function openHelp() {
+    let current = null;
+    const game = app.game;
+    if (!$('screenGame').hidden && game && game.stage !== 'idle') {
+      const human = game.playerById(HUMAN_ID);
+      if (human.inHand && !human.folded && human.hole.length === 2 && game.board.length >= 3) {
+        current = Poker.Evaluator.evaluate([...human.hole, ...game.board]);
+      }
+    }
+    Poker.Help.open(current);
+  }
+
   function saveSettings() {
     const settings = { speed: $('optFast').checked ? 'fast' : 'normal', autoNext: $('optAutoNext').checked };
     app.data = Storage.update({ settings });
@@ -541,6 +569,8 @@
     $('playerName').addEventListener('focus', (event) => event.target.select());
     $('btnContinue').addEventListener('click', continueSavedGame);
     $('btnMenu').addEventListener('click', openMenu);
+    $('btnHelp').addEventListener('click', openHelp);
+    $('btnHelpStart').addEventListener('click', openHelp);
     $('btnNewGame').addEventListener('click', leaveToStart);
     $('btnEndNewGame').addEventListener('click', leaveToStart);
     $('btnRebuy').addEventListener('click', rebuy);

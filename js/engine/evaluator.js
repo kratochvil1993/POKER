@@ -169,5 +169,11 @@
     return result;
   }
 
-  Poker.Evaluator = { CATEGORY, evaluate, evaluateWithName, bestFive, handName, straightHigh };
+  const CATEGORY_LABELS = ['Vysoká karta', 'Pár', 'Dva páry', 'Trojice', 'Postupka', 'Barva', 'Full house', 'Poker', 'Postupka v barvě'];
+
+  function categoryLabel(result) {
+    return result.category === CATEGORY.STRAIGHT_FLUSH && result.ranks[0] === 14 ? 'Královská postupka' : CATEGORY_LABELS[result.category];
+  }
+
+  Poker.Evaluator = { CATEGORY, CATEGORY_LABELS, categoryLabel, evaluate, evaluateWithName, bestFive, handName, straightHigh };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

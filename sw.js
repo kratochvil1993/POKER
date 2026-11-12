@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poker-v1';
+const CACHE_NAME = 'poker-v2';
 const CDN_ORIGIN = 'https://cdn.jsdelivr.net';
 const APP_SHELL = [
   './',
@@ -14,6 +14,7 @@ const APP_SHELL = [
   'js/ui/storage.js',
   'js/ui/messages.js',
   'js/ui/tableView.js',
+  'js/ui/help.js',
   'js/ui/app.js',
   'icons/icon.svg',
   'icons/icon-180.png',

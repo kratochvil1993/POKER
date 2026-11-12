@@ -135,6 +135,7 @@
         const tagEl = h('div', { class: 'seat-tag', hidden: true });
         const dealerEl = h('div', { class: 'dealer-btn', hidden: true, title: 'Dealer' }, 'D');
         const blindEl = h('div', { class: 'blind-tag', hidden: true });
+        const handEl = h('div', { class: 'seat-hand', hidden: true });
         const avatarEl = h('div', { class: 'avatar' }, isHuman ? AVATARS.human : AVATARS[player.personality] || '🙂');
         const pill = h('div', { class: 'seat-pill' }, avatarEl, h('div', { class: 'seat-text' }, nameEl, stackEl), tagEl);
         const seatEl = h(
@@ -147,7 +148,8 @@
           h('div', { class: 'seat-cards' }, holeCards),
           pill,
           dealerEl,
-          blindEl
+          blindEl,
+          handEl
         );
         const pull = isHuman ? 0.52 : 0.46;
         const betEl = h(
@@ -157,7 +159,7 @@
           h('span', { class: 'bet-amt' })
         );
         root.append(seatEl, betEl);
-        this.seats.set(player.id, { seatEl, holeCards, nameEl, stackEl, tagEl, dealerEl, blindEl, betEl, pill, player });
+        this.seats.set(player.id, { seatEl, holeCards, nameEl, stackEl, tagEl, dealerEl, blindEl, handEl, betEl, pill, player });
       });
       this.previousBoardSize = 0;
     }
@@ -188,6 +190,11 @@
         const blindText = index === game.sbIdx && game.stage !== 'idle' ? 'SB' : index === game.bbIdx && game.stage !== 'idle' ? 'BB' : '';
         seat.blindEl.hidden = !blindText || !player.inHand;
         seat.blindEl.textContent = blindText;
+
+        const handName = (ui.handNames && ui.handNames[player.id]) || '';
+        seat.handEl.hidden = !handName || player.folded;
+        seat.handEl.textContent = handName;
+        seat.handEl.classList.toggle('winning', ui.winnerIds.has(player.id));
 
         seat.tagEl.hidden = !(player.inHand && player.allIn && !player.folded);
         seat.tagEl.textContent = 'ALL-IN';
@@ -254,5 +261,6 @@
   }
 
   Poker.TableView = TableView;
+  Poker.CardView = { createCardElement, setCard };
   Poker.TableConsts = { PERSONALITY_LABELS, AVATARS, cardKey };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

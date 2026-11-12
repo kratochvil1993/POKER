@@ -435,3 +435,38 @@ body { touch-action: manipulation; font-family: system-ui, -apple-system, "Segoe
 }
 
 .action-buttons.two { grid-template-columns: 1fr 1.6fr; }
+
+.topbar-left { display: flex; gap: 0.4rem; }
+.seat-hand {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  margin-top: 2px;
+  max-width: 120px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #e9f2ec;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 5;
+}
+.seat.upper .seat-hand { top: auto; bottom: 100%; margin: 0 0 2px; }
+.seat-hand.winning { background: #15803d; color: #fff; }
+.seat.folded .seat-hand { display: none; }
+@media (min-width: 768px) { .seat-hand { font-size: 0.78rem; max-width: 170px; } }
+
+.help-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.help-row { display: flex; gap: 0.7rem; padding: 0.55rem 0.6rem; border-radius: 0.7rem; background: rgba(255, 255, 255, 0.05); border: 1px solid transparent; }
+.help-row.current { border-color: var(--gold); background: rgba(245, 197, 66, 0.12); }
+.help-rank { flex: 0 0 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--gold); color: var(--ink); font-weight: 800; font-size: 0.8rem; display: grid; place-items: center; }
+.help-body { min-width: 0; }
+.help-name { font-weight: 800; }
+.help-badge { margin-left: 0.5rem; font-size: 0.65rem; background: var(--gold); color: var(--ink); padding: 1px 6px; border-radius: 999px; vertical-align: middle; }
+.help-text { font-size: 0.8rem; color: #b9cfc3; margin-bottom: 0.35rem; }
+.help-cards { display: flex; gap: 3px; }
+.help-cards .pcard { --cw: 34px; }

@@ -32,6 +32,7 @@
 
         <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">Začít hru</button>
         <button type="button" id="btnContinue" class="btn btn-outline-light btn-lg w-100 mt-2" hidden></button>
+        <button type="button" id="btnHelpStart" class="btn btn-link text-warning w-100 mt-2">Jaké jsou pokerové kombinace?</button>
       </form>
 
       <div id="startStats" class="start-stats" hidden></div>
@@ -40,7 +41,10 @@
 
   <div id="screenGame" class="screen game-screen" hidden>
     <header class="topbar">
-      <button id="btnMenu" class="btn btn-sm btn-outline-light" type="button" aria-label="Menu">☰ Menu</button>
+      <div class="topbar-left">
+        <button id="btnMenu" class="btn btn-sm btn-outline-light" type="button" aria-label="Menu">☰ Menu</button>
+        <button id="btnHelp" class="btn btn-sm btn-outline-warning" type="button" aria-label="Nápověda ke kombinacím">? Kombinace</button>
+      </div>
       <div id="blindInfo" class="blind-info" aria-live="polite"></div>
       <button id="btnLog" class="btn btn-sm btn-outline-light d-lg-none" type="button">Log</button>
     </header>
@@ -113,6 +117,26 @@
     </div>
   </div>
 
+  <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content poker-modal">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="helpTitle">Pokerové kombinace</h2>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-secondary small mb-2">Od nejsilnější po nejslabší:</p>
+          <ol id="helpList" class="help-list"></ol>
+          <h3 class="fs-6 text-uppercase text-secondary mt-3">Pravidla navíc</h3>
+          <ul id="helpRules" class="small"></ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning fw-bold w-100" data-bs-dismiss="modal">Rozumím</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="endModal" tabindex="-1" aria-labelledby="endTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content poker-modal text-center">
@@ -139,6 +163,7 @@
   <script src="js/ui/storage.js"></script>
   <script src="js/ui/messages.js"></script>
   <script src="js/ui/tableView.js"></script>
+  <script src="js/ui/help.js"></script>
   <script src="js/ui/app.js"></script>
 </body>
 </html>
