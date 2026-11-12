@@ -306,16 +306,21 @@
     return 500 + Math.floor(rng() * 1000);
   }
 
-  function createBotRoster(count, randomInt, startIndex = 0) {
-    const used = new Set();
+  function createBotRoster(count, randomInt, startIndex = 0, takenNames = []) {
+    const used = new Set(takenNames.map((n) => n.toLowerCase()));
     const bots = [];
     for (let i = 0; i < count; i++) {
       const key = PERSONALITY_ORDER[(startIndex + i) % PERSONALITY_ORDER.length];
       const persona = PERSONALITIES[key];
-      const available = persona.names.filter((n) => !used.has(n));
-      const pool = available.length ? available : persona.names;
-      const name = pool[randomInt(pool.length)];
-      used.add(name);
+      const available = persona.names.filter((n) => !used.has(n.toLowerCase()));
+      let name;
+      if (available.length) {
+        name = available[randomInt(available.length)];
+      } else {
+        const base = persona.names[randomInt(persona.names.length)];
+        name = base + ' II';
+      }
+      used.add(name.toLowerCase());
       bots.push({ id: 'bot' + (i + 1), name, isBot: true, personality: key });
     }
     return bots;
